@@ -13,7 +13,7 @@ vector <int> adj[100005];
 vector <int> deg(100005);
 queue <int> q;
 vector <int> dp(100005);
-vector <int> pre(100005);
+vector <int> nx(100005);
 int main(){
 
     ios::sync_with_stdio(false); cin.tie(nullptr);
@@ -40,22 +40,36 @@ int main(){
     }
 
     dp[n] = 1;
+    nx[n] = -1;
 
     while(!q.empty()){
         int curr = q.front();
         q.pop();
         for(int i = 0; i < adj[curr].size(); ++i){
             int nei = adj[curr][i];
-            dp[nei] += dp[curr];
-            dp[nei] %= (int) 1e9 + 7;
             deg[nei]--;
             if(deg[nei] == 0){
                 q.push(nei);
             }
+            if(dp[curr] == 0)
+                continue;
+            if(dp[nei] < dp[curr] + 1){
+                dp[nei] = dp[curr] + 1;
+                nx[nei] = curr;
+            }
         }
     }
     //output
-    cout << dp[1];
-
+    if(dp[1] == 0)
+        cout << "IMPOSSIBLE";
+    else{
+        cout << dp[1] << endl;
+        int cr = 1;
+        cout << cr << " ";
+        while(nx[cr] != -1){
+            cout << nx[cr] << " ";
+            cr = nx[cr];
+        }
+    }
     return 0;
 }

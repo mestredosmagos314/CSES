@@ -15,7 +15,9 @@ stack <int> st;
 vector <int> rev[100005];
 int ans = 0;
 int coin[100005];
-vector <int> meta;
+vector <int> meta(100005);
+vector <int> edge[100005];
+vector <int> deg(100005);
 
 void dfs(int n){
     vis[n] = true;
@@ -33,7 +35,7 @@ void dfs_rev(int n){
         int nei = rev[n][i];
         if(!vis[nei]){
             dfs_rev(nei);
-            meta[ans-1] += coin[nei];
+            meta[ans] += coin[nei];
         }
     }
 }
@@ -74,6 +76,10 @@ int main(){
 
     //kosaraju part 3 (traverse bs)
  
+    for(int i = 1; i <= n; ++i){
+        deg[i] = 0;
+    }
+
     int prev;
     while(!st.empty()){
         int tp = st.top();
@@ -84,17 +90,43 @@ int main(){
 
         if(!vis[tp]){
             ans++;
-            meta.pb(coin[tp]);
+            meta[ans] = coin[tp];
             dfs_rev(tp);
+        }
+        if(ans != 0){
+            edge[prev].pb(tp);
+            deg[prev]++;
+        }
+        prev = tp;
+    }
+
+    //meta graph should be good to go
+    vector <int> dp(ans + 10);
+    queue <int> q;
+    for(int i = 1; i <= ans; ++i){
+        if(deg[i] == 0){
+            q.push(i);
+            dp[i] = meta[i];
         }
     }
 
-    //top-sort on the meta-graph
+    for(int i = 1; i <= ans; ++i){
+        dp[i] = 0;
+    }
+
+    while(!q.empty()){
+        int curr = q.front();
+        for(int i = 0; i < edge[curr].size(); ++i){
+            int nei = edge[curr][i];
+            dp[nei] = max(dp[nei], dp[curr] + meta[nei]);
+        }
+    }
 
     //output
-    //meta graph has ans nodes. king[i] -> amount of coins in the node i of the metagraph (0 ... n-1)
-
-
+    int seila = 0;
+    for(int i = 1; i <= ans; ++i){
+        seila = max(seila, dp[i]);
+    }
 
     return 0;
 }

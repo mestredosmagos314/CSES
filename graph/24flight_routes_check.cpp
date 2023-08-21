@@ -37,7 +37,7 @@ void dfs_rev(int n){
  
 int main(){
  
-    ios::sync_with_stdio(false); cin.tie(nullptr);
+    //ios::sync_with_stdio(false); cin.tie(nullptr);
  
     //input
     cin >> n >> m;

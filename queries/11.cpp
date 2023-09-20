@@ -16,16 +16,6 @@ void propagate(int node){
 	delta[node] = 0;
 }
  
-/*
-int real(int node){
-	return tree[node] + delta[node];
-}
- 
-void compute(int node){ //compute should be update
-	tree[node] = min(tree[2*node] + delta[2*node], tree[2*node+1] + delta[2*node+1]); // min(real(2node), real(2node+1));
-}
-*/
- 
 ll query(int node, int node_left, int node_right, int query_left, int query_right){
 	//case 1: disjoint intervals
 	if(query_right < node_left || query_left > node_right){
@@ -41,13 +31,10 @@ ll query(int node, int node_left, int node_right, int query_left, int query_righ
  
 	//lazy propagation
 	propagate(node);
- 
-	ll queryL = query(2*node, node_left, last_in_left, query_left, query_right);
-	ll queryR = query(2*node + 1, first_in_right, node_right, query_left, query_right);
- 
 	tree[node] = max(tree[2*node] + delta[2*node], tree[2*node+1] + delta[2*node+1]); //compute(node);
  
-	return max(queryL, queryR);
+	return max(query(2*node, node_left, last_in_left, query_left, query_right),
+	 		   query(2*node + 1, first_in_right, node_right, query_left, query_right));
 }
  
 //update should be increment
